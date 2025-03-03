@@ -1,5 +1,8 @@
 import { useState } from 'react'
+import { BrowserRouter as Router,  Routes, Route, Link  } from 'react-router-dom'
 import './App.css'
+import Signuppage from './signup'
+import LoginPage from './login'
 
 function App() {
 
@@ -30,58 +33,68 @@ function App() {
 ]);
 
 return (
-    <div className="container">
-        {/*navbar*/}
-        <header className="navbar">
-            <h1>The Hater's Voice</h1>
-            <input type="text" placeholder="Search posts..." className="search-bar" />
-            <nav>
-                <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Login</a></li>
-                    <li><a href="#">Admin</a></li>
-                </ul>
-            </nav>
-        </header>
+    <Router>      
+        <div className="container">
+            {/*navbar*/}
+            <header className="navbar">
+                <h1>The Hater's Voice</h1>
+                <input type="text" placeholder="Search posts..." className="search-bar" />
+                <nav>
+                    <ul>
+                        <li><Link to="/">Home</Link></li>
+                        <li><Link to="/login">Login</Link></li>
+                        <li><Link to="/signup"> Sign Up </Link></li>
+                        <li><Link to="#">Admin</Link></li>
+                    </ul>
+                </nav>
+            </header>
+                        
+            {/*routes*/}
+            <Routes>
+            <Route path="/" element={ <>
+                    {/*post form*/}
+                    <div className="post-form">
+                        <h2>Create a post:</h2>
+                        <input type="text" placeholder="Title" className="post-title" />
+                        <textarea placeholder="What's on your mind?" className="post-content"></textarea>
+                        <button className="submit-btn">Post</button>
+                    </div>
 
-        {/* post form*/}
-        <div className="post-form">
-            <h2>Create a post:</h2>
-            <input type="text" placeholder="Title" className="post-title" />
-            <textarea placeholder="What's on your mind?" className="post-content"></textarea>
-            <button className="submit-btn">Post</button>
+                    {/*forum posts*/}
+                    <main className="forum">
+                    {posts.map(post => (
+                        <div key={post.id} className="post">
+                            <h3>{post.title}</h3>
+                            <p>{post.content}</p>
+                            <div className="post-actions">
+                                <button className="like-btn">👍 {post.likes}</button>
+                                <button className="edit-btn">✏ Edit</button>
+                                <button className="delete-btn">🗑 Delete</button>
+                            </div>
+                            <div className="comments">
+                                <h4>Comments:</h4>
+                                {post.comments.map(comment => (
+                                <p key={comment.id}><strong>{comment.user}:</strong> {comment.text}</p>
+                                ))}
+                                <input type="text" placeholder="Join the conversation..." className="comment-input" />
+                                <button className="comment-btn">Comment</button>
+                            </div>
+                        </div>
+                    ))}
+                    </main>
+                </>
+                } 
+            />
+            <Route path="/signup" element={<Signuppage />} />
+            <Route path="/login" element={<LoginPage />} />
+            </Routes>
+
+            {/*footer*/}
+            <footer className="footer">
+                <p>© 2025 The Haters Voice</p>
+            </footer>
         </div>
-
-        {/*post area*/}
-        <main className="forum">
-            {posts.map(post => (
-                <div key={post.id} className="post">
-                    <h3>{post.title}</h3>
-                    <p>{post.content}</p>
-                    <div className="post-actions">
-                        <button className="like-btn">👍 {post.likes}</button>
-                        <button className="edit-btn">✏ Edit</button>
-                        <button className="delete-btn">🗑 Delete</button>
-                    </div>
-
-                    {/*comment section*/}
-                    <div className="comments">
-                        <h4>Comments:</h4>
-                        {post.comments.map(comment => (
-                            <p key={comment.id}><strong>{comment.user}:</strong> {comment.text}</p>
-                        ))}
-                        <input type="text" placeholder="Join the conversation..." className="comment-input" />
-                        <button className="comment-btn">Comment</button>
-                    </div>
-                </div>
-            ))}
-        </main>
-
-        {/*footer*/}
-        <footer className="footer">
-            <p>© 2025 The Haters Voice</p>
-        </footer>
-    </div>
+    </Router>
 );
 }
 
