@@ -1,0 +1,169 @@
+/*reset*/
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Avenir;
+  background-color: #2f3749;
+}
+
+/*container*/
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  align-items: center;
+}
+
+/*nav*/
+.navbar {
+  width: 100%;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #000000;
+  color: white;
+}
+
+.navbar .search-bar {
+  padding: 0.5rem;
+  width: 200px;
+  border-radius: 5px;
+  border: none;
+}
+
+.navbar h1 {
+  margin: 0;
+}
+
+.navbar ul {
+  display: flex;
+  list-style: none;
+  padding: 0;
+}
+
+.navbar ul li {
+  margin: 0 15px;
+}
+
+.navbar ul li a {
+  text-decoration: none;
+  font-weight: bold;
+  color: white;
+}
+
+/*post form*/
+.post-form {
+  width: 75%;
+  padding: 20px;
+  margin: 20px auto;
+  border-radius: 8px;
+  background: #444444;
+  box-shadow: 0px 0px 10px #000000;
+}
+
+.post-title,
+.post-content {
+  width: 95%;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  border: 1px solid #adadad;
+}
+
+.submit-btn {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  background-color: #65a4bd;
+}
+
+.submit-btn:hover {
+  background-color: #417185;
+  color: white;
+}
+
+/*post area*/
+.forum {
+  width: 75%;
+  margin: 20px auto;
+}
+
+.post {
+  padding: 20px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  background: #444444;
+  box-shadow: 0px 0px 10px #000000;
+}
+
+.post h3 {
+  margin-top: 0;
+}
+
+.post-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.like-btn, .edit-btn, .delete-btn {
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: #65a4bd;
+}
+
+.like-btn:hover {
+  background-color: #417185;
+}
+
+.edit-btn:hover {
+  background-color: #417185;
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #417185;
+  color: white;
+}
+
+/*comment section*/
+.comments {
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 1px solid #adadad;
+}
+
+.comment-input {
+  width: 95%;
+  padding: 8px;
+  margin-top: 10px;
+  border-radius: 5px;
+  border: 1px solid #adadad;
+}
+
+.comment-btn {
+  margin-top: 5px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  background-color: #65a4bd;
+  color: white;
+}
+
+.comment-btn:hover {
+  background-color: #417185;
+  color: white;
+}
+
+/*footer*/
+.footer {
+  width: 100%;
+  text-align: center;
+  padding: 1rem;
+  margin-top: auto;
+  background-color: #000000;
+  color: white;
+}
