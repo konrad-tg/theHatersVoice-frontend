@@ -54,7 +54,6 @@ body {
   color: white;
 }
 
-
 .post-form {
   width: 75%;
   padding: 20px;
@@ -193,12 +192,13 @@ body {
   align-items: center;
 }
 
-.signup-page h2 {
-  text-align: center;
+table, th, td {
+  border: 1px;
+  width: 50%;
+  margin: auto;
+  border-collapse: collapse;
   color: white;
-  margin-top: 0;
 }
-
 
 /*footer*/
 .footer {

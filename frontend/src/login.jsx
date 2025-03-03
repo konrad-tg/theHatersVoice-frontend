@@ -6,14 +6,14 @@ function LoginPage() {
   return (
     <div className="signup-page">
       <h2>Login</h2>
-      <form className="login-form">
-        <input type="email" placeholder="Email" className="signup-input" required />
+      <form className="signup-form">
+        <input type="text" placeholder="Email or Username" className="signup-input" required />
         <br></br>
         <input type="password" placeholder="Password" className="signup-input" required/>
         <br></br>
         <button type="submit" className="submit-btn">Login</button>
       </form>
-      <p className="auth-switch"> Don't have an account? <Link to="/signup">Sign up here</Link>
+      <p className=""> Don't have an account? <Link to="/signup">Sign up here</Link>
       </p>
     </div>
   );
