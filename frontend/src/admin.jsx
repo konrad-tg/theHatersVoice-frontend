@@ -52,7 +52,11 @@ function Adminpage() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(editUser),
+        body: JSON.stringify({
+          username: editUser.username,
+          email: editUser.email,
+          isAdmin: editUser.isAdmin,
+        }),
       });
       const data = await response.json();
       if (response.ok) {
@@ -68,6 +72,7 @@ function Adminpage() {
   };
 
   const handleInputChange = (event) => {
+    const value = event.target.name =='isAdmin' ? event.target.value === 'true' : event.target.value;
     setEditUser({ ...editUser, [event.target.name]: event.target.value });
   };
 
@@ -96,11 +101,11 @@ function Adminpage() {
                             user.email}
                         </td>
                         <td>{editUser && editUser._id === user._id ? 
-                            <select name="role" value={editUser.role} onChange={handleInputChange}>
-                                <option value="user">User</option>
-                                <option value="admin">Admin</option>
+                            <select name="isAdmin" value={editUser.isAdmin.toString()} onChange={handleInputChange}>
+                                <option value="false">User</option>
+                                <option value="true">Admin</option>
                             </select> : 
-                            user.role}
+                            user.isAdmin ? 'Admin' : 'User'}
                         </td>
                         <td>
                             {editUser && editUser._id === user._id ? (
