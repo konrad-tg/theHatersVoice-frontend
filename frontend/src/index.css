@@ -66,3 +66,9 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.login-info {
+  margin-top: 0.5rem;
+  font-weight: bold;
+  color: #00ff99;
+}
