@@ -10,6 +10,7 @@ function App() {
     const [newPost, setNewPost] = useState('');
     const [error, setError] = useState('');
     const [username, setUsername] = useState(null);
+    const [title, setTitle] = useState('');
 
     //gets username from token on app load
     useEffect(() => {
@@ -39,7 +40,7 @@ function App() {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify({ post: newPost }),
+                body: JSON.stringify({ post: newPost, title }),
             });
 
             const data = await res.json();
@@ -47,6 +48,7 @@ function App() {
             if (res.ok) {
                 setPosts(prev => [data.post, ...prev]);
                 setNewPost('');
+                setTitle('');
                 setError('');
             } else {
                 setError(data.error || 'Failed to create post.');
@@ -109,6 +111,13 @@ function App() {
                             <div className="post-form">
                                 <h2>Create a post:</h2>
                                 {error && <p style={{ color: 'red' }}>{error}</p>}
+                                <input
+                                    type="text"
+                                    placeholder="Title"
+                                    className="post-title"
+                                    value={title}
+                                    onChange={(e) => setTitle(e.target.value)}
+                                />
                                 <textarea
                                     placeholder="What's on your mind?"
                                     className="post-content"
@@ -121,7 +130,7 @@ function App() {
                             <main className="forum">
                                 {posts.map(post => (
                                     <div key={post._id || post.postid} className="post">
-                                        <h3>Post #{post.postid}</h3>
+                                        <h3>{post.title || `Post #${post.postid}`}</h3>
                                         <p>{post.post}</p>
                                         <div className="post-actions">
                                             <button className="like-btn">👍 {post.likeCount || 0}</button>
