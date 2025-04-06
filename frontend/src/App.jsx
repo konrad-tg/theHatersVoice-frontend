@@ -13,6 +13,8 @@ function App() {
     const [title, setTitle] = useState('');
     const [comments, setComments] = useState({});
     const [newComments, setNewComments] = useState({});
+    const [editingPostId, setEditingPostId] = useState(null);
+    const [editedContent, setEditedContent] = useState('');
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -123,6 +125,47 @@ function App() {
         }
     };
 
+    const handleEditClick = (postId, currentContent) => {
+        setEditingPostId(postId);
+        setEditedContent(currentContent);
+    };
+
+    const handleSaveEdit = async (postId) => {
+        const token = localStorage.getItem('token');
+        if (!token) return alert('Please log in to edit posts.');
+
+        try {
+            const res = await fetch(`http://localhost:5001/api/posts/${postId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ post: editedContent }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                setPosts(prev =>
+                    prev.map(post =>
+                        post.postid === postId ? { ...post, post: data.post.post } : post
+                    )
+                );
+                setEditingPostId(null);
+                setEditedContent('');
+            } else {
+                console.error('Failed to edit post:', data.error);
+            }
+        } catch (err) {
+            console.error('Error editing post:', err.message);
+        }
+    };
+
+    const handleCancelEdit = () => {
+        setEditingPostId(null);
+        setEditedContent('');
+    };
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -203,12 +246,26 @@ function App() {
                                 {posts.map(post => (
                                     <div key={post._id || post.postid} className="post">
                                         <h3>{post.title || `Post #${post.postid}`}</h3>
-                                        <p>{post.post}</p>
+                                        {editingPostId === post.postid ? (
+                                            <>
+                                                <textarea
+                                                    value={editedContent}
+                                                    onChange={(e) => setEditedContent(e.target.value)}
+                                                    className="post-content"
+                                                ></textarea>
+                                                <button onClick={() => handleSaveEdit(post.postid)}>Save</button>
+                                                <button onClick={handleCancelEdit}>Cancel</button>
+                                            </>
+                                        ) : (
+                                            <p>{post.post}</p>
+                                        )}
                                         <div className="post-actions">
                                             <button className="like-btn" onClick={() => handleLike(post.postid)}>
                                                 👍 {post.likeCount || 0}
                                             </button>
-                                            <button className="edit-btn">✏ Edit</button>
+                                            <button className="edit-btn" onClick={() => handleEditClick(post.postid, post.post)}>
+                                                ✏ Edit
+                                            </button>
                                             <button className="delete-btn">🗑 Delete</button>
                                         </div>
                                         <div className="comments">
