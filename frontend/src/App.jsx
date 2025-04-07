@@ -208,6 +208,12 @@ function App() {
         setEditedContent('');
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        setUsername(null);
+        window.location.href = '/login'; //forces redirect to log in
+    };
+
     useEffect(() => {
         const fetchPosts = async () => {
             const token = localStorage.getItem('token');
@@ -244,7 +250,12 @@ function App() {
         <div className="container">
             {username && (
                 <div className="login-info">
-                    Welcome to the Hater's Voice! You are logged in as <strong>{username}</strong>.
+                    <div>
+                        Welcome to the Hater's Voice! You are logged in as <strong>{username}</strong>.
+                    </div>
+                    <button onClick={handleLogout}>
+                        Log Out
+                    </button>
                 </div>
             )}
             <header className="navbar">

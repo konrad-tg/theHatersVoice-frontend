@@ -211,11 +211,27 @@ table, th, td {
 }
 
 .login-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   background-color: #111;
   color: #00ff99;
-  padding: 0.5rem 1rem;
-  font-weight: bold;
-  text-align: right;
-  border-bottom: 1px solid #333;
+  padding: 10px 20px;
+  font-size: 16px;
 }
 
+.logout-btn {
+  background: transparent;
+  border: 1px solid #00ff99;
+  color: #00ff99;
+  padding: 5px 12px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.logout-btn:hover {
+  background-color: #00ff99;
+  color: #111;
+}
