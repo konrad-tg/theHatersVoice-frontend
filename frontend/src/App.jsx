@@ -15,6 +15,8 @@ function App() {
     const [newComments, setNewComments] = useState({});
     const [editingPostId, setEditingPostId] = useState(null);
     const [editedContent, setEditedContent] = useState('');
+    const [editingCommentId, setEditingCommentId] = useState(null);
+    const [editedCommentText, setEditedCommentText] = useState('');
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -93,6 +95,41 @@ function App() {
             }
         } catch (err) {
             console.error('Comment error:', err.message);
+        }
+    };
+
+
+    const handleEditComment = async (commentId) => {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        try {
+            const res = await fetch(`http://localhost:5001/api/comments/${commentId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ comment: editedCommentText }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                const postId = Object.keys(comments).find(pid =>
+                    comments[pid].some(c => c.commentId === commentId)
+                );
+                const updatedRes = await fetch(`http://localhost:5001/api/comments/${postId}`);
+                const updatedComments = await updatedRes.json();
+                setComments(prev => ({ ...prev, [postId]: updatedComments }));
+
+                setEditingCommentId(null);
+                setEditedCommentText('');
+            } else {
+                console.error('Failed to edit comment:', data.error);
+            }
+        } catch (err) {
+            console.error('Edit comment error:', err.message);
         }
     };
 
@@ -271,7 +308,34 @@ function App() {
                                         <div className="comments">
                                             <h4>Comments:</h4>
                                             {comments[post.postid]?.map((c) => (
-                                                <p key={c.commentId}>• {c.comment}</p>
+                                                <div key={c.commentId} className="comment">
+                                                    {editingCommentId === c.commentId ? (
+                                                        <>
+                                                            <input
+                                                                type="text"
+                                                                value={editedCommentText}
+                                                                onChange={(e) => setEditedCommentText(e.target.value)}
+                                                            />
+                                                            <button onClick={() => handleEditComment(c.commentId)}>Save</button>
+                                                            <button onClick={() => setEditingCommentId(null)}>Cancel</button>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <p>• {c.comment}</p>
+                                                            {username && (
+                                                                <button
+                                                                    onClick={() => {
+                                                                        setEditingCommentId(c.commentId);
+                                                                        setEditedCommentText(c.comment);
+                                                                    }}
+                                                                    className="edit-comment-btn"
+                                                                >
+                                                                    ✏ Edit
+                                                                </button>
+                                                            )}
+                                                        </>
+                                                    )}
+                                                </div>
                                             ))}
                                             <input
                                                 type="text"
