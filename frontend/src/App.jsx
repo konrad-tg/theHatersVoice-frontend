@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import './App.css';
 import Signuppage from './signup';
 import LoginPage from './login';
@@ -17,6 +17,7 @@ function App() {
     const [editedContent, setEditedContent] = useState('');
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [editedCommentText, setEditedCommentText] = useState('');
+    const location = useLocation();
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -26,9 +27,12 @@ function App() {
                 setUsername(payload.username);
             } catch (err) {
                 console.error('Failed to decode token:', err);
+                setUsername(null);
             }
+        } else {
+            setUsername(null);
         }
-    }, []);
+    }, [location]); //dependency triggers rerun when route changes
 
     const handlePostSubmit = async () => {
         const token = localStorage.getItem('token');
@@ -237,133 +241,131 @@ function App() {
     }, []);
 
     return (
-        <Router>
-            <div className="container">
-                {username && (
-                    <div className="login-info">
-                        Welcome to the Hater's Voice! You are logged in as <strong>{username}</strong>.
-                    </div>
-                )}
-                <header className="navbar">
-                    <h1>The Hater's Voice</h1>
-                    <input type="text" placeholder="Search posts..." className="search-bar" />
-                    <nav>
-                        <ul>
-                            <li><Link to="/">Home</Link></li>
-                            <li><Link to="/login">Login</Link></li>
-                            <li><Link to="/signup">Sign Up</Link></li>
-                            <li><Link to="/admin">Admin</Link></li>
-                        </ul>
-                    </nav>
-                </header>
+        <div className="container">
+            {username && (
+                <div className="login-info">
+                    Welcome to the Hater's Voice! You are logged in as <strong>{username}</strong>.
+                </div>
+            )}
+            <header className="navbar">
+                <h1>The Hater's Voice</h1>
+                <input type="text" placeholder="Search posts..." className="search-bar" />
+                <nav>
+                    <ul>
+                        <li><Link to="/">Home</Link></li>
+                        <li><Link to="/login">Login</Link></li>
+                        <li><Link to="/signup">Sign Up</Link></li>
+                        <li><Link to="/admin">Admin</Link></li>
+                    </ul>
+                </nav>
+            </header>
 
-                <Routes>
-                    <Route path="/" element={
-                        <>
-                            <div className="post-form">
-                                <h2>Create a post:</h2>
-                                {error && <p style={{ color: 'red' }}>{error}</p>}
-                                <input
-                                    type="text"
-                                    placeholder="Title"
-                                    className="post-title"
-                                    value={title}
-                                    onChange={(e) => setTitle(e.target.value)}
-                                />
-                                <textarea
-                                    placeholder="What's on your mind?"
-                                    className="post-content"
-                                    value={newPost}
-                                    onChange={(e) => setNewPost(e.target.value)}
-                                ></textarea>
-                                <button className="submit-btn" onClick={handlePostSubmit}>Post</button>
-                            </div>
+            <Routes>
+                <Route path="/" element={
+                    <>
+                        <div className="post-form">
+                            <h2>Create a post:</h2>
+                            {error && <p style={{ color: 'red' }}>{error}</p>}
+                            <input
+                                type="text"
+                                placeholder="Title"
+                                className="post-title"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                            />
+                            <textarea
+                                placeholder="What's on your mind?"
+                                className="post-content"
+                                value={newPost}
+                                onChange={(e) => setNewPost(e.target.value)}
+                            ></textarea>
+                            <button className="submit-btn" onClick={handlePostSubmit}>Post</button>
+                        </div>
 
-                            <main className="forum">
-                                {posts.map(post => (
-                                    <div key={post._id || post.postid} className="post">
-                                        <h3>{post.title || `Post #${post.postid}`}</h3>
-                                        {editingPostId === post.postid ? (
-                                            <>
-                                                <textarea
-                                                    value={editedContent}
-                                                    onChange={(e) => setEditedContent(e.target.value)}
-                                                    className="post-content"
-                                                ></textarea>
-                                                <button onClick={() => handleSaveEdit(post.postid)}>Save</button>
-                                                <button onClick={handleCancelEdit}>Cancel</button>
-                                            </>
-                                        ) : (
-                                            <p>{post.post}</p>
-                                        )}
-                                        <div className="post-actions">
-                                            <button className="like-btn" onClick={() => handleLike(post.postid)}>
-                                                👍 {post.likeCount || 0}
-                                            </button>
-                                            <button className="edit-btn" onClick={() => handleEditClick(post.postid, post.post)}>
-                                                ✏ Edit
-                                            </button>
-                                            <button className="delete-btn">🗑 Delete</button>
-                                        </div>
-                                        <div className="comments">
-                                            <h4>Comments:</h4>
-                                            {comments[post.postid]?.map((c) => (
-                                                <div key={c.commentId} className="comment">
-                                                    {editingCommentId === c.commentId ? (
-                                                        <>
-                                                            <input
-                                                                type="text"
-                                                                value={editedCommentText}
-                                                                onChange={(e) => setEditedCommentText(e.target.value)}
-                                                            />
-                                                            <button onClick={() => handleEditComment(c.commentId)}>Save</button>
-                                                            <button onClick={() => setEditingCommentId(null)}>Cancel</button>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <p>• {c.comment}</p>
-                                                            {username && (
-                                                                <button
-                                                                    onClick={() => {
-                                                                        setEditingCommentId(c.commentId);
-                                                                        setEditedCommentText(c.comment);
-                                                                    }}
-                                                                    className="edit-comment-btn"
-                                                                >
-                                                                    ✏ Edit
-                                                                </button>
-                                                            )}
-                                                        </>
-                                                    )}
-                                                </div>
-                                            ))}
-                                            <input
-                                                type="text"
-                                                placeholder="Join the conversation..."
-                                                className="comment-input"
-                                                value={newComments[post.postid] || ''}
-                                                onChange={(e) => handleCommentChange(post.postid, e.target.value)}
-                                            />
-                                            <button
-                                                className="comment-btn"
-                                                onClick={() => handleCommentSubmit(post.postid)}
-                                            >Comment</button>
-                                        </div>
+                        <main className="forum">
+                            {posts.map(post => (
+                                <div key={post._id || post.postid} className="post">
+                                    <h3>{post.title || `Post #${post.postid}`}</h3>
+                                    {editingPostId === post.postid ? (
+                                        <>
+                                            <textarea
+                                                value={editedContent}
+                                                onChange={(e) => setEditedContent(e.target.value)}
+                                                className="post-content"
+                                            ></textarea>
+                                            <button onClick={() => handleSaveEdit(post.postid)}>Save</button>
+                                            <button onClick={handleCancelEdit}>Cancel</button>
+                                        </>
+                                    ) : (
+                                        <p>{post.post}</p>
+                                    )}
+                                    <div className="post-actions">
+                                        <button className="like-btn" onClick={() => handleLike(post.postid)}>
+                                            👍 {post.likeCount || 0}
+                                        </button>
+                                        <button className="edit-btn" onClick={() => handleEditClick(post.postid, post.post)}>
+                                            ✏ Edit
+                                        </button>
+                                        <button className="delete-btn">🗑 Delete</button>
                                     </div>
-                                ))}
-                            </main>
-                        </>
-                    } />
-                    <Route path="/signup" element={<Signuppage />} />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/admin" element={<Adminpage />} />
-                </Routes>
+                                    <div className="comments">
+                                        <h4>Comments:</h4>
+                                        {comments[post.postid]?.map((c) => (
+                                            <div key={c.commentId} className="comment">
+                                                {editingCommentId === c.commentId ? (
+                                                    <>
+                                                        <input
+                                                            type="text"
+                                                            value={editedCommentText}
+                                                            onChange={(e) => setEditedCommentText(e.target.value)}
+                                                        />
+                                                        <button onClick={() => handleEditComment(c.commentId)}>Save</button>
+                                                        <button onClick={() => setEditingCommentId(null)}>Cancel</button>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <p>• {c.comment}</p>
+                                                        {username && (
+                                                            <button
+                                                                onClick={() => {
+                                                                    setEditingCommentId(c.commentId);
+                                                                    setEditedCommentText(c.comment);
+                                                                }}
+                                                                className="edit-comment-btn"
+                                                            >
+                                                                ✏ Edit
+                                                            </button>
+                                                        )}
+                                                    </>
+                                                )}
+                                            </div>
+                                        ))}
+                                        <input
+                                            type="text"
+                                            placeholder="Join the conversation..."
+                                            className="comment-input"
+                                            value={newComments[post.postid] || ''}
+                                            onChange={(e) => handleCommentChange(post.postid, e.target.value)}
+                                        />
+                                        <button
+                                            className="comment-btn"
+                                            onClick={() => handleCommentSubmit(post.postid)}
+                                        >Comment</button>
+                                    </div>
+                                </div>
+                            ))}
+                        </main>
+                    </>
+                } />
+                <Route path="/signup" element={<Signuppage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/admin" element={<Adminpage />} />
+            </Routes>
 
-                <footer className="footer">
-                    <p>© 2025 The Haters Voice</p>
-                </footer>
-            </div>
-        </Router>
+            <footer className="footer">
+                <p>© 2025 The Haters Voice</p>
+            </footer>
+        </div>
     );
 }
 
