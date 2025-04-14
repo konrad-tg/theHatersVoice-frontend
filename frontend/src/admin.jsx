@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import './app.css';
-//import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 function Adminpage() {
   const token = localStorage.getItem('token');
-
+  const [checkAuth, setCheckAuth] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [users, setUsers] = useState([]);
   const [posts, setPosts] = useState([]);
   const [comments, setComments] = useState([]);
@@ -13,9 +14,27 @@ function Adminpage() {
   const [editUser, setEditUser] = useState(null);
 
   useEffect(() => {
-    fetchUsers();
-    fetchPostsAndComments();
-  }, []);
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        console.log('Decoded token:', decodedToken);
+        setIsAdmin(decodedToken.isAdmin);
+      } catch (error) {
+        setIsAdmin(false);
+        console.error('Token decoding error:', error);
+      }
+    } else {
+      setIsAdmin(false);
+    }
+    setCheckAuth(false);
+  }, [token]);
+
+  useEffect(() => {
+    if (isAdmin === true) {
+      fetchUsers();
+      fetchPostsAndComments();
+    }
+  }, [isAdmin]);
 
   const fetchUsers = async () => {
     try {
@@ -112,6 +131,14 @@ function Adminpage() {
     const value = event.target.name == 'isAdmin' ? event.target.value === 'true' : event.target.value;
     setEditUser({ ...editUser, [event.target.name]: value });
   };
+
+  if (checkAuth) {
+    return <div>Loading...</div>;
+  }
+
+  if (!isAdmin) {
+    return <Navigate to="/login" />;
+  }
 
   return (
     <div className="admin-page">
