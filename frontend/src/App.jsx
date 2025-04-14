@@ -85,7 +85,7 @@ function App() {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify({ postId, comment: commentText })
+                body: JSON.stringify({ postid: postId, comment: commentText })
             });
 
             const data = await res.json();

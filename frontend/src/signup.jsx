@@ -48,8 +48,9 @@ function Signuppage() {
             const data = await response.json();
 
             if (response.ok) {
+                localStorage.removeItem('token'); //logout current user if logged in
                 alert('Registration successful!');
-                navigate('/'); //redirect to homepage
+                navigate('/login');
             } else {
                 alert(data.error || 'Registration failed.');
             }
