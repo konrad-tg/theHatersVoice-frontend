@@ -68,6 +68,36 @@ function App() {
         }
     };
 
+    const handleDeletePost = async (postId) => {
+        const token = localStorage.getItem('token');
+        if (!token) return alert('Please log in to delete posts.');
+    
+        const confirmed = window.confirm("Are you sure you want to delete this post?");
+        if (!confirmed) return;
+    
+        try {
+            const res = await fetch(`http://localhost:5001/api/posts/${postId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+    
+            const data = await res.json();
+    
+            if (res.ok) {
+                //remove deleted post
+                setPosts(prev => prev.filter(post => post.postid !== postId));
+            } else {
+                alert(data.error || 'Failed to delete post.');
+            }
+        } catch (err) {
+            console.error('Delete error:', err.message);
+            alert('Error deleting post.');
+        }
+    };
+    
+
     const handleCommentChange = (postId, value) => {
         setNewComments(prev => ({ ...prev, [postId]: value }));
     };
@@ -85,7 +115,7 @@ function App() {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify({ postid: postId, comment: commentText })
+                body: JSON.stringify({ postId, comment: commentText })
             });
 
             const data = await res.json();
@@ -317,7 +347,7 @@ function App() {
                                         <button className="edit-btn" onClick={() => handleEditClick(post.postid, post.post)}>
                                             ✏ Edit
                                         </button>
-                                        <button className="delete-btn">🗑 Delete</button>
+                                        <button className="delete-btn" onClick={() => handleDeletePost(post.postid)}>🗑 Delete</button>
                                     </div>
                                     <div className="comments">
                                         <h4>Comments:</h4>
